@@ -13,6 +13,7 @@ class Product(models.Model):
     #Django will always automatically create a primary key for us, as we want to crate key by our own can do as below
     #sku =  models.CharField(max_length=10, primary_key=True)
     title =  models.CharField(max_length=255)
+    slug = models.SlugField()
     description = models.TextField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
