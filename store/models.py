@@ -1,7 +1,13 @@
 from django.db import models
 
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
+    #products
+
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    feature_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
 
 class Product(models.Model):
     #Django will always automatically create a primary key for us, as we want to crate key by our own can do as below
@@ -14,6 +20,7 @@ class Product(models.Model):
     last_update = models.DateField(auto_now=True)
     #protect, if the collection model is accidentally deleted, you wont delete the product
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    promotions = models.ManyToManyField(Promotion) #related_name='product'
 
 class Customer(models.Model):
     MEMBERSHIP_BRONZE= 'B'
@@ -31,7 +38,7 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
-    membership = models.CharField(choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
+    membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
@@ -45,12 +52,12 @@ class Order(models.Model):
     ]
 
     place_at = models.DateTimeField(auto_now_add=True)
-    payment_status = models.CharField(choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
+    payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    product = models.ForeignKey(Order, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
