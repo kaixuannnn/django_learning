@@ -1,3 +1,4 @@
+from pickle import TRUE
 from django.db import models
 
 class Product(models.Model):
@@ -41,3 +42,12 @@ class Order(models.Model):
 
     place_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
+
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    #on_delete is the action that when the customer model is deleted, CASCADE means the address will be deleted too
+    #SET_NULL, while the customer is deleted, the address will remain, the customer field will set to null
+    #PROTECT, address (child) cannot be deleted, if the customer(parent) is exist, child can only be delete, while the cutsomer is deleted too
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, primary_key=TRUE)
+    #we add primary key to the customer field, so each customer only has one address, one to one relationship valid
