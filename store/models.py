@@ -41,6 +41,10 @@ class Customer(models.Model):
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
+    class Meta:
+        db_table = 'store_customers'
+        indexes = [models.Index(fields=['last_name', 'first_name'])]
+
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
     PAYMENT_STATUS_COMPLETE= 'C'
@@ -65,6 +69,7 @@ class OrderItem(models.Model):
 class Address(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
+    zip = models.CharField(max_length=30)
     #on_delete is the action that when the customer model is deleted, CASCADE means the address will be deleted too
     #SET_NULL, while the customer is deleted, the address will remain, the customer field will set to null
     #PROTECT, address (child) cannot be deleted, if the customer(parent) is exist, child can only be delete, while the cutsomer is deleted too
